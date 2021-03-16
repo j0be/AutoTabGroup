@@ -6,5 +6,11 @@
     "background": {
         "service_worker": "background.js"
     },
-    "permissions": ["tabs", "tabGroups"]
+    "permissions": ["tabs", "tabGroups"],
+    "icons": {
+        "16": "/16x16.png",
+        "32": "/32x32.png",
+        "48": "/48x48.png",
+        "128": "/128x128.png"
+    }
 }
