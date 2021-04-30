@@ -1,17 +1,20 @@
 let tabsManaged = [];
 
+function noop() {}
+
 function getDomainFromUrl(url) {
     let urlObj = (new URL(url));
     return urlObj.hostname.replace('www.','').toLowerCase();
 }
 
-chrome.tabs.onUpdated.addListener((tabId, updatedTab) => {
-    if (!tabsManaged.includes(tabId) && updatedTab.url) {
-        tabsManaged.push(tabId);
+chrome.tabs.onUpdated.addListener((currentTabId, updatedTab) => {
+    if (!tabsManaged.includes(currentTabId) && updatedTab.url) {
+        tabsManaged.push(currentTabId);
 
         let tabGroupInfo = {};
+        let currentGroupId;
+
         chrome.tabGroups.query({}, function(tabGroups) {
-            // For some reason, querying based on groupId isn't working
             chrome.tabs.query({ /* groupId: tabGroup.id */ }, function (tabs) {
                 tabGroups.forEach(function(tabGroup) {
                     let domain;
@@ -28,8 +31,9 @@ chrome.tabs.onUpdated.addListener((tabId, updatedTab) => {
                                 return true;
                             }
 
-                            if (tab.id === tabId) {
+                            if (tab.id === currentTabId) {
                                 // Ignore the tab we just opened
+                                currentGroupId = tabGroup.id;
                                 return true;
                             }
 
@@ -54,9 +58,13 @@ chrome.tabs.onUpdated.addListener((tabId, updatedTab) => {
                 });
 
                 if (matchingGroupId) {
-                    chrome.tabs.group({ groupId: Number(matchingGroupId), tabIds: tabId }, function(groupId) {
-                        // No callback
-                    });
+                    //Add tab to group
+                    chrome.tabs.group({ groupId: Number(matchingGroupId), tabIds: currentTabId }, noop);
+                    //Expand group if it's collapse to avoid dark pattern
+                    chrome.tabGroups.update(Number(matchingGroupId), { collapsed: false }, noop)
+                } else if (tabGroupInfo[currentGroupId] && tabGroupInfo[currentGroupId].isSameDomain) {
+                    //Remove tab from group
+                    chrome.tabs.ungroup(currentTabId, noop);
                 }
             });
         });
