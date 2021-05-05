@@ -48,7 +48,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, updatedTab) => {
                     };
 
                     if (tabGroupInfo[tabGroup.id].isSameDomain) {
-                        tabGroupInfo[tabGroup.id].domain = getDomainFromUrl(tabsInGroup[0].url);
+                        tabGroupInfo[tabGroup.id].domain = getDomainFromUrl(domain);
                     }
                 });
 
@@ -61,7 +61,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, updatedTab) => {
                     //Add tab to group
                     chrome.tabs.group({ groupId: Number(matchingGroupId), tabIds: currentTabId }, noop);
                     //Expand group if it's collapse to avoid dark pattern
-                    chrome.tabGroups.update(Number(matchingGroupId), { collapsed: false }, noop)
+                    chrome.tabGroups.update(Number(matchingGroupId), { collapsed: false }, noop);
                 } else if (tabGroupInfo[currentGroupId] && tabGroupInfo[currentGroupId].isSameDomain) {
                     //Remove tab from group
                     chrome.tabs.ungroup(currentTabId, noop);
