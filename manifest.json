@@ -1,7 +1,7 @@
 {
     "name": "Auto Tab Group",
     "description": "This extension will automatically group tabs by domain if a group already exists with only that domain in the group.",
-    "version": "1.1",
+    "version": "1.2",
     "manifest_version": 3,
     "background": {
         "service_worker": "background.js"
