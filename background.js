@@ -17,10 +17,13 @@ chrome.tabs.onUpdated.addListener((currentTabId, updatedTab) => {
         chrome.tabGroups.query({}, function(tabGroups) {
             chrome.tabs.query({ /* groupId: tabGroup.id */ }, function (tabs) {
                 tabGroups.forEach(function(tabGroup) {
-                    let domain;
                     let tabsInGroup = tabs.filter(function(tab) {
                         return tab.groupId === tabGroup.id;
                     });
+                    let firstUrl = (tabsInGroup.find(function(tab) {
+                        return !!tab.url;
+                    }) || {}).url;
+                    let domain = firstUrl && getDomainFromUrl(firstUrl);
 
                     tabGroupInfo[tabGroup.id] = {
                         name: tabGroup.title,
