@@ -48,7 +48,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, updatedTab) => {
                     };
 
                     if (tabGroupInfo[tabGroup.id].isSameDomain) {
-                        tabGroupInfo[tabGroup.id].domain = getDomainFromUrl(domain);
+                        tabGroupInfo[tabGroup.id].domain = domain;
                     }
                 });
 
